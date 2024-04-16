@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/chat.css"> <!-- New CSS file for chat layout -->
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <!-- Navigation bar -->
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/logout">Log out</a>
+    </nav>
+
+    <input id="user-id" type="hidden" value="<%= user.id %>">
+    <!-- Main content -->
+    <div class="content">
+        <div class="online-users">
+            <ul id="online-users-list">
+                <!-- Online users will be listed here -->
+            </ul>
+        </div>
+        
+        <div class="chat">
+            <form id="message-form" action="">
+                <input type="text" name="message">
+                <button>Send</button>
+            </form>
+            <div id="messages-container"></div> 
+        </div>
+    </div>
+
+    <!-- Include your JavaScript file -->
+    <script src="/js/chat.js"></script>
+</body>
+</html>

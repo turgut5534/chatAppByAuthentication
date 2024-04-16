@@ -1,0 +1,142 @@
+body {
+    position: relative;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+#message-form {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+}
+
+#message-form input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+}
+
+#message-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#message-form button:hover {
+    background-color: #0056b3;
+}
+
+.message {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin: 5px 1rem 0 1rem;
+    border-radius: 5px;
+    max-width: fit-content; /* Limit the width of the message */
+    word-wrap: break-word; /* Wrap long words */
+}
+
+.mymessage {
+    background-color: #53df92;
+    padding: 10px;
+    margin: 5px 1rem 0 1rem;
+    border-radius: 5px;
+    max-width: fit-content; /* Limit the width of mymessage */
+    word-wrap: break-word; /* Wrap long words */
+    text-align: right; /* Align mymessage content to the right */
+    margin-left: auto; /* Push mymessage to the right */
+    display: block; /* Make mymessage occupy the entire width */
+}
+
+
+.logout-button {
+    padding: 10px;
+    margin: 10px;
+    background-color: red;
+}
+
+.notify {
+    background-color: #e92929;
+    padding: 5px;
+    margin: 5px 1rem 0 1rem;
+    border-radius: 5px;
+    max-width: fit-content; /* Limit the width of the message */
+    word-wrap: break-word; /* Wrap long words */
+    color: white;
+    font-size: small;
+}
+
+.green {
+    background-color: #53df92 !important;
+}
+
+nav {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-right: 20px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* CSS for chat layout */
+.content {
+    display: flex;
+}
+
+
+
+.chat {
+    flex: 3;
+    padding: 10px; /* Add some padding for better visual appearance */
+}
+
+/* CSS for online users list */
+/* CSS for online users list */
+.online-users {
+    flex: 1;
+    border-right: 1px solid #ccc; /* Add a border to separate online users from chat */
+    padding: 10px; /* Add some padding for better visual appearance */
+    margin-left: 15px;
+}
+
+#online-users-list {
+    list-style: none;
+    padding: 0;
+}
+
+#online-users-list li {
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: relative; /* Make the list item position relative for absolute positioning of the green point */
+}
+
+#online-users-list li::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background-color: green;
+    border-radius: 50%; /* Make it round */
+    position: absolute;
+    left: -16px; /* Adjust the position */
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+}
