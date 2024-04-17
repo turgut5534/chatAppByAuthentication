@@ -26,6 +26,9 @@ const User = sequelize.define('User', {
 User.hasMany(Message)
 Message.belongsTo(User)
 
+User.hasMany(Room)
+Room.belongsTo(User)
+
 sequelize.sync()
 
 module.exports = User;

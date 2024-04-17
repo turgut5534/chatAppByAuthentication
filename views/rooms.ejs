@@ -70,7 +70,7 @@
       border-radius: 4px;
     }
 
-    .confirm-button {
+    .confirm-button  {
       display: block;
       width: 100%;
       padding: 10px;
@@ -82,7 +82,23 @@
       transition: background-color 0.3s ease;
     }
 
+    .add-button  {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #34db74;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
     .confirm-button:hover {
+      background-color: #2980b9;
+    }
+
+    .add-button:hover {
       background-color: #2980b9;
     }
   </style>
@@ -102,35 +118,81 @@
         <label style="background-color: greenyellow;" for="newRoom">Create New Room</label>
       </li>
     </ul>
-    <input type="text" id="newRoomName" class="new-room-input" placeholder="Enter new room name" style="display: none;">
-    <button class="confirm-button" onclick="confirmRoom()">Confirm</button>
+
+    <button class="confirm-button">Confirm</button>
+    <form id="newRoomForm" action="/rooms/add" method="POST">
+      <input name="name" type="text" id="newRoomName" class="new-room-input" placeholder="Enter new room name" style="display: none;">
+      <input name="password" type="password" id="newRoomPassword" class="new-room-input" placeholder="Password" style="display: none;">
+      <button style="display: none;" class="add-button">Add</button>
+    </form>
+
   </div>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script>
-    function confirmRoom() {
-      var selectedRoom = document.querySelector('input[name="room"]:checked');
-      var newRoomNameInput = document.getElementById('newRoomName');
-      if (selectedRoom) {
-        if (selectedRoom.value === "new") {
-          var newRoomName = newRoomNameInput.value.trim();
-          if (newRoomName === "") {
-            alert("Please enter a name for the new room.");
-            return;
-          }
-          window.location.href = "/rooms/add/" + encodeURIComponent(newRoomName);
-        } else {
-          window.location.href = "/rooms/" + selectedRoom.value;
-        }
-      } else {
-        alert("Please select a room before confirming.");
-      }
-    }
 
-    // Show/hide new room name input based on selection
-    document.getElementById('newRoom').addEventListener('change', function() {
-      var newRoomNameInput = document.getElementById('newRoomName');
-      newRoomNameInput.style.display = this.checked ? 'block' : 'none';
+      const newRoomNameInput = $('#newRoomName');
+      const newRoomPasswordInput = $('#newRoomPassword');
+      const addButton = $('.add-button');
+      const confirmButton = $('.confirm-button');
+
+      $.ajaxSetup({
+          beforeSend: function(xhr) {
+              xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+          }
+      });
+
+      $('#newRoom').change(function() {
+
+        if ($(this).prop('checked')) {
+            newRoomNameInput.show();
+            newRoomPasswordInput.show();
+            addButton.show();
+            confirmButton.hide();
+        } else {
+            newRoomNameInput.hide();
+            newRoomPasswordInput.hide();
+            addButton.hide();
+            confirmButton.hide();
+        }
     });
+
+
+      $('.confirm-button').on('click', function(e){
+
+        e.preventDefault();
+
+        const selectedRoom = $('input[name="room"]:checked').val();
+
+        if (selectedRoom) {
+
+            window.location.href = `/rooms/${selectedRoom}`
+        } else {
+
+            alert('Please select a room');
+        }
+    });
+
+
+      $('#newRoomForm').on('submit', function(e) {
+
+        e.preventDefault()
+
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: $(this).serialize() ,
+            success: function (data) {
+              window.location.href = `rooms/${data.name}`
+            },
+            error: (e)=>{
+              alert('The room is already exists')
+            }
+        })
+
+      })
+
+
   </script>
 </body>
 </html>

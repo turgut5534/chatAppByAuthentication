@@ -7,8 +7,14 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config();
 const auth = require('../middlewares/auth')
 const slugify = require('slugify')
+const rs = require('randomstring')
 const Room = require('../models/Room')
 const Message = require('../models/Message')
+
+
+router.get('/', (req,res) => {
+    res.render('homepage')
+})
 
 router.get('/rooms/:name', auth, async (req,res) => {
     
@@ -42,7 +48,9 @@ router.get('/rooms', auth, async (req,res) => {
 
     try {
 
-        const rooms = await Room.findAll();
+        const rooms = await Room.findAll({
+            include: {model:User}
+        });
 
         res.render('rooms', {rooms})
 
@@ -52,21 +60,31 @@ router.get('/rooms', auth, async (req,res) => {
 
 })
 
-router.get('/rooms/add/:room' , async (req,res) => {
+router.post('/rooms/add' , auth, async (req,res) => {
     
     try {
-        const roomExists = await Room.findOne({where: {name:req.params.room}})
+
+        const {name,password} = req.body
+        const roomExists = await Room.findOne({where: {name}})
 
         if(roomExists) {
             return res.status(401).send({message: 'This room is already exists'})
         }
     
-        await Room.create({
-            name: req.params.room,
-            slug: slugify(req.params.room, {lower: true})
+        const newRoom = new Room({
+            name: name,
+            slug: rs.generate(20),
+            UserId: req.user.id
         })
+        
+        if(password) {
+            const hashedPassword = await bcrypt.hash(password,10)
+            newRoom.password = hashedPassword
+        }
+
+        await newRoom.save()
     
-        res.redirect('/rooms')
+        res.status(201).send(newRoom)
 
     } catch(e) {
         console.log(e)
