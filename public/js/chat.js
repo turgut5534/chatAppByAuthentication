@@ -3,6 +3,7 @@ const socket = io();
 const messageForm = document.querySelector('#message-form')
 
 const userId = document.querySelector('#user-id').value
+const roomId= document.querySelector('#room-id').value
 
 messageForm.addEventListener('submit', (e) => {
 
@@ -14,7 +15,7 @@ messageForm.addEventListener('submit', (e) => {
 
     input.value = ""
     
-    socket.emit('message', {message, userId})
+    socket.emit('message', {message, userId, roomId})
 
 })
 
@@ -57,9 +58,6 @@ socket.on('sendToClient', (data) => {
 });
 
 
-
-
-
 socket.on('notify', (data) =>{
 
     const newMessageElement = document.createElement('div');
@@ -73,7 +71,8 @@ socket.on('notify', (data) =>{
 
 })
 
-socket.emit('userLoggedIn')
+
+socket.emit('userLoggedIn', {room: roomId})
 
 socket.on('showOnline', (data) => {
     const onlineUsersList = document.getElementById('online-users-list');

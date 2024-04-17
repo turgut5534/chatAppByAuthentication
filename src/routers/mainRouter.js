@@ -6,14 +6,75 @@ const validateInputs = require('../utils/helper')
 const jwt = require('jsonwebtoken')
 require('dotenv').config();
 const auth = require('../middlewares/auth')
+const slugify = require('slugify')
+const Room = require('../models/Room')
+const Message = require('../models/Message')
 
-router.get('/', auth, (req,res) => {
+router.get('/rooms/:name', auth, async (req,res) => {
     
-    user = req.user
+    try {
 
-    res.render('index', {user})
+        const room= await Room.findOne({where: {name: req.params.name}})
+
+        if(!room) {
+            return res.redirect('/rooms')
+        }
+        const user = await User.findByPk(req.user.id)
+        user.room_id = room.id
+        await user.save()
+
+        const messages = await Message.findAll({
+            where: { RoomId: room.id },
+            include: [{ model: User }],
+          });
+
+
+        res.render('index', {user: req.user, room:room.id, messages})
+
+    } catch(e) {
+        console.log(e)
+    }
+
     
 })
+
+router.get('/rooms', auth, async (req,res) => {
+
+    try {
+
+        const rooms = await Room.findAll();
+
+        res.render('rooms', {rooms})
+
+    } catch(e) {
+        console.log(e)
+    }   
+
+})
+
+router.get('/rooms/add/:room' , async (req,res) => {
+    
+    try {
+        const roomExists = await Room.findOne({where: {name:req.params.room}})
+
+        if(roomExists) {
+            return res.status(401).send({message: 'This room is already exists'})
+        }
+    
+        await Room.create({
+            name: req.params.room,
+            slug: slugify(req.params.room, {lower: true})
+        })
+    
+        res.redirect('/rooms')
+
+    } catch(e) {
+        console.log(e)
+    }
+
+
+})
+
 
 router.get('/login', (req,res) => {
     

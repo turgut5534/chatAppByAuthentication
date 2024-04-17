@@ -18,6 +18,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(mainRouter);
 
+const Message = require('./models/Message')
+
 const server = http.createServer(app);
 const io = socketio(server);
 app.set('io', io);
@@ -26,36 +28,61 @@ const onlineUsers = []
 
 io.on('connection', (socket) => {
 
-    if (socket.user) {
-        const username = `${socket.user.firstName} ${socket.user.lastName}`;
-        socket.broadcast.emit('notify', { user: username, userId: socket.user.id, message: " has joined the chat", status: true })
-    }
+    socket.on('message', async (data) => {
 
-    socket.on('message', (data) => {
+        try {
+    
+            const username = `${socket.user.firstName} ${socket.user.lastName}`;
+            io.to(data.roomId).emit('sendToClient', { user: username, userId: socket.user.id, message: data.message })
 
-        const username = `${socket.user.firstName} ${socket.user.lastName}`;
-        io.emit('sendToClient', { user: username, userId: socket.user.id, message: data.message })
+            await Message.create({
+                text: data.message,
+                UserId: socket.user.id,
+                RoomId: data.roomId
+            })
+
+        } catch(e) {
+            console.log(e)
+        }
 
     })
 
-    socket.on('userLoggedIn', () => {
+    socket.on('userLoggedIn', (room) => {
 
         const isUserOnline = onlineUsers.some(user => user.id === socket.user.id);
 
-        // If the user is not already in the onlineUsers list, add them
         if (!isUserOnline) {
-            onlineUsers.push(socket.user);
+            newUser = {
+                id: socket.user.id,
+                firstName: socket.user.firstName,
+                lastName: socket.user.lastName,
+                email: socket.user.email,
+                room: room.room
+            }
+            onlineUsers.push(newUser);
+
         }
-        // console.log(onlineUsers)
-        io.emit('showOnline', {users:onlineUsers})
+
+        const onlineUsersInRoom = onlineUsers.filter(user => user.room  === room.room)
+
+        socket.join(room.room)
+        io.to(room.room).emit('showOnline', {users:onlineUsersInRoom})
+
+        const username = `${socket.user.firstName} ${socket.user.lastName}`;
+        socket.broadcast.to(room.room).emit('notify', { user: username, userId: socket.user.id, message: " has joined the chat", status: true })
 
     })
 
     socket.on('disconnect', () => {
 
+    
         if (socket.user) {
+            
+            const user = onlineUsers.find(user => user.id === socket.user.id)
+
             const username = `${socket.user.firstName} ${socket.user.lastName}`;
-            io.emit('notify', { user: username, userId: socket.user.id, message: " has left the chat", status: false })
+    
+            io.to(user.room).emit('notify', { user: username, userId: socket.user.id, message: " has left the chat", status: false })
 
             const index = onlineUsers.findIndex(user => user.id === socket.user.id);
 
@@ -63,8 +90,7 @@ io.on('connection', (socket) => {
                 onlineUsers.splice(index, 1);
             }
 
-            // console.log(onlineUsers)
-            io.emit('userLoggedOut', {userId: socket.user.id})
+            io.to(user.room).emit('userLoggedOut', {userId: socket.user.id})
         }
 
     })

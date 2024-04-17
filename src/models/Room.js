@@ -1,31 +1,25 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db/mysql'); // Assuming you have sequelize.js file for configuring Sequelize
 const Message = require('./Message')
-const Room = require('./Room')
 
-const User = sequelize.define('User', {
-    firstName: {
+const Room = sequelize.define('Room', {
+ 
+    name: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    lastName: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    email: {
+    slug: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true 
-    },
+        unique: true,
+      },
     password: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     }
 });
 
-User.hasMany(Message)
-Message.belongsTo(User)
+Room.hasMany(Message)
+Message.belongsTo(Room);
 
-sequelize.sync()
-
-module.exports = User;
+module.exports = Room;

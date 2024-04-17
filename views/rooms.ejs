@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Room Selection</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .room-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .room-list li {
+      margin-bottom: 10px;
+    }
+
+    .room-list li label {
+      display: block;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .room-list li label:hover {
+      background-color: #e6e6e6;
+    }
+
+    .room-list li input[type="radio"] {
+      display: none;
+    }
+
+    .room-list li input[type="radio"]:checked + label {
+      background-color: #3498db;
+      color: #fff;
+    }
+
+    .room-list li input[type="radio"]:checked + label::before {
+      content: '✔';
+      margin-right: 5px;
+    }
+
+    .new-room-input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .confirm-button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .confirm-button:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Select or Create a Chat Room</h1>
+    <ul class="room-list">
+      <% rooms.forEach((room) => {%>
+        <li>
+          <input type="radio" id="<%= room.id %>" name="room" value="<%= room.name %>">
+          <label style="text-transform: capitalize;" for="<%= room.id %>"><%= room.name %></label>
+        </li>
+      <% }) %>
+      <li>
+        <input type="radio" id="newRoom" name="room" value="new">
+        <label style="background-color: greenyellow;" for="newRoom">Create New Room</label>
+      </li>
+    </ul>
+    <input type="text" id="newRoomName" class="new-room-input" placeholder="Enter new room name" style="display: none;">
+    <button class="confirm-button" onclick="confirmRoom()">Confirm</button>
+  </div>
+
+  <script>
+    function confirmRoom() {
+      var selectedRoom = document.querySelector('input[name="room"]:checked');
+      var newRoomNameInput = document.getElementById('newRoomName');
+      if (selectedRoom) {
+        if (selectedRoom.value === "new") {
+          var newRoomName = newRoomNameInput.value.trim();
+          if (newRoomName === "") {
+            alert("Please enter a name for the new room.");
+            return;
+          }
+          window.location.href = "/rooms/add/" + encodeURIComponent(newRoomName);
+        } else {
+          window.location.href = "/rooms/" + selectedRoom.value;
+        }
+      } else {
+        alert("Please select a room before confirming.");
+      }
+    }
+
+    // Show/hide new room name input based on selection
+    document.getElementById('newRoom').addEventListener('change', function() {
+      var newRoomNameInput = document.getElementById('newRoomName');
+      newRoomNameInput.style.display = this.checked ? 'block' : 'none';
+    });
+  </script>
+</body>
+</html>
