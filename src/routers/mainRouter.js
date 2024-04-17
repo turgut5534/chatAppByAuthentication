@@ -16,11 +16,11 @@ router.get('/', (req,res) => {
     res.render('homepage')
 })
 
-router.get('/rooms/:name', auth, async (req,res) => {
+router.get('/rooms/:slug', auth, async (req,res) => {
     
     try {
 
-        const room= await Room.findOne({where: {name: req.params.name}})
+        const room= await Room.findOne({where: {slug: req.params.slug}})
 
         if(!room) {
             return res.redirect('/rooms')
@@ -42,6 +42,32 @@ router.get('/rooms/:name', auth, async (req,res) => {
     }
 
     
+})
+
+router.post('/check-password', async(req,res) => {
+
+    try{
+
+        const {password, selectedRoom} = req.body
+
+        const room = await Room.findOne({where: {slug:selectedRoom}})
+
+        if(!room) {
+            return res.status(404).send({message: 'The room not found. Please refresh the page'})
+        }
+
+        const passwordMatch = await bcrypt.compare(password, room.password)
+
+        if(!passwordMatch) {
+            return res.status(404).send({message: 'Incorrect password'})
+        }
+
+        res.status(200).send()
+
+    }catch(e) {
+        console.log(e)
+    }
+
 })
 
 router.get('/rooms', auth, async (req,res) => {

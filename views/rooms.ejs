@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat Room Selection</title>
+  <script src="https://kit.fontawesome.com/be9c4374e2.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/iziToast.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -109,8 +111,8 @@
     <ul class="room-list">
       <% rooms.forEach((room) => {%>
         <li>
-          <input type="radio" id="<%= room.id %>" name="room" value="<%= room.name %>">
-          <label style="text-transform: capitalize;" for="<%= room.id %>"><%= room.name %></label>
+          <input class="<%if(room.password) {%>locked<%}else{%>unlocked<%}%>" type="radio" id="<%= room.id %>" name="room" value="<%= room.slug %>">
+          <label style="text-transform: capitalize;" for="<%= room.id %>"><%if(room.password) {%><i class="fa-solid fa-lock"></i> <% }else{%><i class="fa-solid fa-unlock-keyhole"></i><%}%>  <%= room.name %></label>
         </li>
       <% }) %>
       <li>
@@ -129,6 +131,7 @@
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="/js/iziToast.min.js"></script>
   <script>
 
       const newRoomNameInput = $('#newRoomName');
@@ -163,10 +166,32 @@
         e.preventDefault();
 
         const selectedRoom = $('input[name="room"]:checked').val();
+        const isLocked = $('input[name="room"]:checked').attr('class')
 
         if (selectedRoom) {
 
-            window.location.href = `/rooms/${selectedRoom}`
+            if(isLocked == 'unlocked') {
+              window.location.href = `/rooms/${selectedRoom}`
+            }else {
+              const password = window.prompt("Please enter the password","");
+
+              $.ajax({
+                type: 'POST',
+                url: '/check-password',
+                data: {password, selectedRoom},
+                success: function(){
+                  window.location.href = `/rooms/${selectedRoom}`
+                },
+                error: function(e){
+                  iziToast.error({
+                        title: 'Error',
+                        message: JSON.stringify(e.responseJSON.message),
+                    });
+                }
+              })
+
+            }
+          
         } else {
 
             alert('Please select a room');
