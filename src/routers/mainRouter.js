@@ -78,7 +78,7 @@ router.get('/rooms', auth, async (req,res) => {
             include: {model:User}
         });
 
-        res.render('rooms', {rooms})
+        res.render('rooms', {rooms, user:req.user})
 
     } catch(e) {
         console.log(e)
@@ -95,6 +95,12 @@ router.post('/rooms/add' , auth, async (req,res) => {
 
         if(roomExists) {
             return res.status(401).send({message: 'This room is already exists'})
+        }
+
+        const roomForUser = await Room.findAll({where: {UserId:req.user.id}})
+
+        if(roomForUser.length >=3 ) {
+            return res.status(401).send({message: 'You can not create more than 3 rooms'})
         }
     
         const newRoom = new Room({

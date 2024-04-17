@@ -35,6 +35,7 @@
 
     .room-list li {
       margin-bottom: 10px;
+      position: relative; /* Make the list item a positioning context */
     }
 
     .room-list li label {
@@ -59,10 +60,25 @@
       color: #fff;
     }
 
-    .room-list li input[type="radio"]:checked + label::before {
-      content: '✔';
-      margin-right: 5px;
+    .room-list li button.delete-button {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-left: 10px; /* Add some margin between the button and the label */
+      padding: 5px 10px;
+      background-color: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
     }
+
+    .room-list li button.delete-button:hover {
+      background-color: #c0392b;
+    }
+
 
     .new-room-input {
       width: calc(100% - 20px);
@@ -103,18 +119,30 @@
     .add-button:hover {
       background-color: #2980b9;
     }
+
+    
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Select or Create a Chat Room</h1>
     <ul class="room-list">
-      <% rooms.forEach((room) => {%>
+      <% rooms.forEach((room) => { %>
         <li>
-          <input class="<%if(room.password) {%>locked<%}else{%>unlocked<%}%>" type="radio" id="<%= room.id %>" name="room" value="<%= room.slug %>">
-          <label style="text-transform: capitalize;" for="<%= room.id %>"><%if(room.password) {%><i class="fa-solid fa-lock"></i> <% }else{%><i class="fa-solid fa-unlock-keyhole"></i><%}%>  <%= room.name %></label>
+          <input class="<% if(room.password) { %>locked<% } else { %>unlocked<% } %>" type="radio" id="<%= room.id %>" name="room" value="<%= room.slug %>">
+          <label style="text-transform: capitalize;" for="<%= room.id %>">
+            <% if(room.password) { %>
+              <i class="fa-solid fa-lock"></i>
+            <% } else { %>
+              <i class="fa-solid fa-unlock-keyhole"></i>
+            <% } %>
+            <%= room.name %>
+          </label>
+          <% if(room.UserId == user.id) {%>
+          <button class="delete-button" data-room-id="<%= room.id %>">Delete</button>
+          <%}%>
         </li>
-      <% }) %>
+      <% }); %>
       <li>
         <input type="radio" id="newRoom" name="room" value="new">
         <label style="background-color: greenyellow;" for="newRoom">Create New Room</label>
@@ -210,9 +238,12 @@
             success: function (data) {
               window.location.href = `rooms/${data.name}`
             },
-            error: (e)=>{
-              alert('The room is already exists')
-            }
+            error: function(e){
+                  iziToast.error({
+                        title: 'Error',
+                        message: JSON.stringify(e.responseJSON.message),
+                    });
+                }
         })
 
       })
