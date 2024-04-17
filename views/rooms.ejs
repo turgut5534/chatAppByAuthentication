@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat Room Selection</title>
   <script src="https://kit.fontawesome.com/be9c4374e2.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="/css/iziToast.css">
   <style>
     body {
@@ -128,7 +129,7 @@
     <h1>Select or Create a Chat Room</h1>
     <ul class="room-list">
       <% rooms.forEach((room) => { %>
-        <li>
+        <li class="room-<%=room.id%>">
           <input class="<% if(room.password) { %>locked<% } else { %>unlocked<% } %>" type="radio" id="<%= room.id %>" name="room" value="<%= room.slug %>">
           <label style="text-transform: capitalize;" for="<%= room.id %>">
             <% if(room.password) { %>
@@ -245,6 +246,47 @@
                     });
                 }
         })
+
+      })
+
+      $('.delete-button').on('click', function(e) {
+
+        e.preventDefault()
+        
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+          if (result.isConfirmed) {
+
+            const roomId = $(this).data('room-id')
+        
+            $.ajax({
+              type:'DELETE',
+              url: '/rooms/delete',
+              data: {roomId},
+              success: function(data){
+                iziToast.error({
+                        title: 'Success',
+                        message:data.message ,
+                    });
+
+                $('.room-'+ roomId).remove()
+              },
+              error: function(){
+                console.log(e)
+              }
+            })
+          }
+
+        });
+
+       
 
       })
 
