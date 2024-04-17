@@ -71,6 +71,8 @@ io.on('connection', (socket) => {
         const username = `${socket.user.firstName} ${socket.user.lastName}`;
         socket.broadcast.to(room.room).emit('notify', { user: username, userId: socket.user.id, message: " has joined the chat", status: true })
 
+        
+
     })
 
     socket.on('disconnect', () => {

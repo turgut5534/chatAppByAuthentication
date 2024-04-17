@@ -44,7 +44,7 @@ router.get('/rooms/:slug', auth, async (req,res) => {
     
 })
 
-router.post('/check-password', async(req,res) => {
+router.post('/check-password', auth, async(req,res) => {
 
     try{
 
