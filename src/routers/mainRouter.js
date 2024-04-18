@@ -167,7 +167,20 @@ router.delete('/rooms/delete', auth, async(req,res) => {
             return res.status(404).send({message: 'Room could not be found'})
         }
 
-        await room.destroy()
+        const messagesOfTheRoom = await Message.findAll({
+            where: {
+                RoomId: room.id
+            }
+        })
+
+        if(messagesOfTheRoom.length > 0) {
+            await Message.destroy({
+                where: {
+                    RoomId: room.id
+                }
+            })
+        }
+        // await room.destroy()
 
         res.status(200).send({message: 'The room was deleted successfully'})
 
