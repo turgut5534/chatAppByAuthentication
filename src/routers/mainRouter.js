@@ -180,7 +180,7 @@ router.delete('/rooms/delete', auth, async(req,res) => {
                 }
             })
         }
-        // await room.destroy()
+        await room.destroy()
 
         res.status(200).send({message: 'The room was deleted successfully'})
 
