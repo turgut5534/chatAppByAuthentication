@@ -21,7 +21,7 @@ router.get('/rooms/:slug', auth, async (req,res) => {
     
     try {
 
-        var isLocked = true;
+        var isLocked = false;
 
         const room= await Room.findOne({where: {slug: req.params.slug}})
 
@@ -34,8 +34,8 @@ router.get('/rooms/:slug', auth, async (req,res) => {
           
             const roomInfo = roomData.find(info => info.RoomId == room.id && info.UserId == req.user.id)
 
-            if(roomInfo) {
-                isLocked = false
+            if(!roomInfo) {
+                isLocked = true
             }
 
         }
