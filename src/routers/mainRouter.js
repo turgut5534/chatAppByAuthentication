@@ -11,6 +11,7 @@ const rs = require('randomstring')
 const Room = require('../models/Room')
 const Message = require('../models/Message')
 
+const roomData = []
 
 router.get('/', (req,res) => {
     res.render('homepage')
@@ -20,11 +21,25 @@ router.get('/rooms/:slug', auth, async (req,res) => {
     
     try {
 
+        var isLocked = true;
+
         const room= await Room.findOne({where: {slug: req.params.slug}})
 
         if(!room) {
             return res.redirect('/rooms')
         }
+        
+        if(room.password) {
+
+          
+            const roomInfo = roomData.find(info => info.RoomId == room.id && info.UserId == req.user.id)
+
+            if(roomInfo) {
+                isLocked = false
+            }
+
+        }
+
         const user = await User.findByPk(req.user.id)
         user.room_id = room.id
         await user.save()
@@ -35,7 +50,7 @@ router.get('/rooms/:slug', auth, async (req,res) => {
           });
 
 
-        res.render('index', {user: req.user, room:room.id, messages})
+        res.render('index', {user: req.user, room:room.id, messages, isLocked, slug:req.params.slug})
 
     } catch(e) {
         console.log(e)
@@ -47,6 +62,8 @@ router.get('/rooms/:slug', auth, async (req,res) => {
 router.post('/check-password', auth, async(req,res) => {
 
     try{
+
+        console.log('_______________________________-')
 
         const {password, selectedRoom} = req.body
 
@@ -60,6 +77,17 @@ router.post('/check-password', auth, async(req,res) => {
 
         if(!passwordMatch) {
             return res.status(404).send({message: 'Incorrect password'})
+        }
+
+        const roomInfo = {
+            RoomId: room.id,
+            UserId : req.user.id
+        }
+
+        const existingRoomData = roomData.some(info => info.id == room.id )
+
+        if (!existingRoomData) {
+            roomData.push(roomInfo)
         }
 
         res.status(200).send()

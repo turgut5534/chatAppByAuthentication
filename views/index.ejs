@@ -7,13 +7,62 @@
     <link rel="stylesheet" href="/css/index.css">
     <link rel="stylesheet" href="/css/chat.css"> <!-- New CSS file for chat layout -->
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://kit.fontawesome.com/be9c4374e2.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="/css/iziToast.css">
 </head>
 <body>
+    <% if(isLocked) {%>
+
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: #222;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+            .container {
+                text-align: center;
+            }
+            input[type="password"] {
+                padding: 10px;
+                margin-bottom: 10px;
+                width: 200px;
+            }
+            button {
+                padding: 10px 20px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+            }
+            button:hover {
+                background-color: #45a049;
+            }
+        </style>
+
+        <body>
+            <div class="container">
+                <form id="password-form" method="POST">
+                    <input id="room-password" name="password" type="password" placeholder="Enter room password" required>
+                    <br>
+                    <button type="submit">Join</button>
+                </form>
+            </div>
+        </body>
+
+        <input id="room-slug" type="hidden" value="<%= slug %>">
+
+    <%} else {%>
     <!-- Navigation bar -->
     <nav>
         <a href="/">Home</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
+        <a href="/rooms">Rooms</a>
         <a href="/logout">Log out</a>
     </nav>
 
@@ -44,5 +93,43 @@
 
     <!-- Include your JavaScript file -->
     <script src="/js/chat.js"></script>
+    <%}%>
+
+
+    
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="/js/iziToast.min.js"></script>
+    <script>
+
+        $.ajaxSetup({
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+                }
+        });
+
+        $('#password-form').on('submit', function(e){
+
+            e.preventDefault()
+
+            const password = $('#room-password').val()
+            const selectedRoom = $('#room-slug').val()
+
+            $.ajax({
+                type: 'POST',
+                url: '/check-password',
+                data: {password, selectedRoom},
+                success: function(){
+                  window.location.href = `/rooms/${selectedRoom}`
+                },
+                error: function(e){
+                  iziToast.error({
+                        title: 'Error',
+                        message: JSON.stringify(e.responseJSON.message),
+                    });
+                }
+              })
+
+        })
+    </script>
 </body>
 </html>
