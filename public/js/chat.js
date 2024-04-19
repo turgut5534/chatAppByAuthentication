@@ -61,8 +61,8 @@ socket.on('notify', (data) =>{
     } else {
         newMessageElement.classList.add('red')
     }
-    const messagesContainer = document.querySelector('.messages');
-    messagesContainer.appendChild(newMessageElement);
+    const messagesContainerLocal = document.querySelector('.messages');
+    messagesContainerLocal.appendChild(newMessageElement);
 
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
