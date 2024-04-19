@@ -662,7 +662,7 @@ li.repaly .time {
 
 .button-wrapper {
     position: relative;
-    width: 100px;
+    /* width: 100px; */
     height: 100px;
     text-align: center;
     margin: 0 auto;
@@ -808,6 +808,6 @@ nav a:hover {
 }
 
 .img-fluid {
-    width: 45px;
+    width: 20px;
     height: 45px;
 }

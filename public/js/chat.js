@@ -15,9 +15,15 @@ messageForm.addEventListener('submit', (e) => {
 
     input.value = ""
     
-    socket.emit('message', {message, userId, roomId})
+    socket.emit('message', {message, userId, roomId}, handleMessageCallback)
 
 })
+
+const handleMessageCallback = (error) => {
+    if (error) {
+        console.error("Error:", error);
+    }
+};
 
 
 socket.on('sendToClient', (data) => {

@@ -28,19 +28,32 @@ const onlineUsers = []
 
 io.on('connection', (socket) => {
 
-    socket.on('message', async (data) => {
+    socket.on('message', async (data, callback) => {
 
         try {
     
             const username = `${socket.user.firstName} ${socket.user.lastName}`;
 
-            io.to(data.roomId).emit('sendToClient', { user: username, userId: socket.user.id, message: data.message })
+            const isValidMessage = (message) => {
+                return message.trim() !== '';
+            };
+
+                    // Check if message is valid
+        if (isValidMessage(data.message)) {
+            io.to(data.roomId).emit('sendToClient', { user: username, userId: socket.user.id, message: data.message });
 
             await Message.create({
                 text: data.message,
                 UserId: socket.user.id,
                 RoomId: data.roomId
-            })
+            });
+
+            // Call the callback function with no error
+            callback();
+        } else {
+            // Call the callback function with an error message
+            callback('Message is empty');
+        }
 
         } catch(e) {
             console.log(e)
