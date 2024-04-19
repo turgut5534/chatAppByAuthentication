@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const http = require('http');
 const socketio = require('socket.io');
+const validator = require('validator')
 
 const app = express();
 const publicDirectoy = path.join(__dirname, '../public');
@@ -34,17 +35,14 @@ io.on('connection', (socket) => {
     
             const username = `${socket.user.firstName} ${socket.user.lastName}`;
 
-            console.log(data.message)
-
-            if(data.message != '' ) {
-                io.to(data.roomId).emit('sendToClient', { user: username, userId: socket.user.id, message: data.message })
-
+            if (data.message.trim() !== '') { // Check if message is not empty after trimming whitespace
+                io.to(data.roomId).emit('sendToClient', { user: username, userId: socket.user.id, message: data.message });
+    
                 await Message.create({
                     text: data.message,
                     UserId: socket.user.id,
                     RoomId: data.roomId
-                })
-    
+                });
             }
 
         } catch(e) {
