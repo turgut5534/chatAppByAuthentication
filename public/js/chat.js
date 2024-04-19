@@ -30,7 +30,7 @@ const handleMessageCallback = (error) => {
     if (error) {
         console.error("Error:", error);
     } else {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        // messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 };
 
@@ -55,6 +55,8 @@ socket.on('sendToClient', (data) => {
         <p>${messager}${data.message}</p>
         <span class="time">${formattedTime}</span>
     </li>`)
+
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
 })
 
 
