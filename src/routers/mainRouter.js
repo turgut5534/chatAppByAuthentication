@@ -23,15 +23,22 @@ router.get('/rooms/:slug', auth, async (req,res) => {
 
         var isLocked = false;
 
-        const room= await Room.findOne({where: {slug: req.params.slug}})
+        // const room= await Room.findOne({where: {slug: req.params.slug}})
+        const room= await Room.findOne({
+            include : {
+                model: User
+            },
+            where: {
+                slug: req.params.slug
+            }
+        })
 
         if(!room) {
             return res.redirect('/rooms')
         }
-        
+
         if(room.password) {
 
-          
             const roomInfo = roomData.find(info => info.RoomId == room.id && info.UserId == req.user.id)
 
             if(!roomInfo) {
@@ -40,6 +47,7 @@ router.get('/rooms/:slug', auth, async (req,res) => {
 
         }
 
+        console.log(roomData)
         const user = await User.findByPk(req.user.id)
         user.room_id = room.id
         await user.save()
@@ -49,8 +57,7 @@ router.get('/rooms/:slug', auth, async (req,res) => {
             include: [{ model: User }],
           });
 
-
-        res.render('index', {user: req.user, room:room.id, messages, isLocked, slug:req.params.slug})
+        res.render('chat', {user: req.user, room:room, messages, isLocked, slug:req.params.slug})
 
     } catch(e) {
         console.log(e)
@@ -59,12 +66,14 @@ router.get('/rooms/:slug', auth, async (req,res) => {
     
 })
 
+router.get('/chat', (req,res) => {
+    res.render('chat')
+})
+
 router.post('/check-password', auth, async(req,res) => {
 
     try{
-
-        console.log('_______________________________-')
-
+        
         const {password, selectedRoom} = req.body
 
         const room = await Room.findOne({where: {slug:selectedRoom}})
@@ -84,7 +93,7 @@ router.post('/check-password', auth, async(req,res) => {
             UserId : req.user.id
         }
 
-        const existingRoomData = roomData.some(info => info.id == room.id )
+        const existingRoomData = roomData.some(info => info.RoomId == room.id && info.UserId == req.user.id )
 
         if (!existingRoomData) {
             roomData.push(roomInfo)
@@ -250,7 +259,7 @@ router.post('/login', async (req,res) => {
         return res.status(401).json({message: "Incorrect email or password"})
     }
 
-    const token = jwt.sign({userId: userExist.id}, process.env.SECRET_KEY, {expiresIn: '1h'})
+    const token = jwt.sign({userId: userExist.id}, process.env.SECRET_KEY, {expiresIn: '12h'})
 
     res.cookie('token', token, {httpOnly:true})
 

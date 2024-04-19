@@ -71,29 +71,32 @@ io.on('connection', (socket) => {
         const username = `${socket.user.firstName} ${socket.user.lastName}`;
         socket.broadcast.to(room.room).emit('notify', { user: username, userId: socket.user.id, message: " has joined the chat", status: true })
 
-        
-
     })
 
     socket.on('disconnect', () => {
 
     
-        if (socket.user) {
+        try {
+            if (socket.user) {
             
-            const user = onlineUsers.find(user => user.id === socket.user.id)
-
-            const username = `${socket.user.firstName} ${socket.user.lastName}`;
+                const user = onlineUsers.find(user => user.id === socket.user.id)
     
-            io.to(user.room).emit('notify', { user: username, userId: socket.user.id, message: " has left the chat", status: false })
-
-            const index = onlineUsers.findIndex(user => user.id === socket.user.id);
-
-            if (index !== -1) {
-                onlineUsers.splice(index, 1);
+                const username = `${socket.user.firstName} ${socket.user.lastName}`;
+        
+                io.to(user.room).emit('notify', { user: username, userId: socket.user.id, message: " has left the chat", status: false })
+    
+                const index = onlineUsers.findIndex(user => user.id === socket.user.id);
+    
+                if (index !== -1) {
+                    onlineUsers.splice(index, 1);
+                }
+    
+                io.to(user.room).emit('userLoggedOut', {userId: socket.user.id, onlineUsers: onlineUsers})
             }
-
-            io.to(user.room).emit('userLoggedOut', {userId: socket.user.id})
+        } catch(e) {
+            console.log(e)
         }
+
 
     })
 

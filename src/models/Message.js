@@ -4,8 +4,12 @@ const sequelize = require('../db/mysql'); // Assuming you have sequelize.js file
 const Message = sequelize.define('Message', {
  
     text: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false
+    },
+    file: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 });
 

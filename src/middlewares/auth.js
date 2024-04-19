@@ -15,6 +15,10 @@ const auth = async (req,res,next) => {
         const userId = decoded.userId
     
         const user = await User.findByPk(userId)
+
+        if(!user) {
+            return res.redirect('/login')
+        }
     
         req.user = user
 

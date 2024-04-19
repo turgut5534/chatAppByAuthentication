@@ -9,7 +9,7 @@ messageForm.addEventListener('submit', (e) => {
 
     e.preventDefault()
 
-    const message = document.querySelector('input[type="text"]').value
+    const message = document.querySelector('#chat-message-input').value
    
     const input = messageForm.querySelector('input[name="message"]');
 
@@ -19,43 +19,24 @@ messageForm.addEventListener('submit', (e) => {
 
 })
 
-socket.on('sendToClient', (data) => {
-    // Create a new Date object to get the current time
-    const currentTime = new Date();
 
-    // Get the current time components and pad them with leading zeros if necessary
+socket.on('sendToClient', (data) => {
+
+    const currentTime = new Date();
     const hours = String(currentTime.getHours()).padStart(2, '0');
     const minutes = String(currentTime.getMinutes()).padStart(2, '0');
-    const seconds = String(currentTime.getSeconds()).padStart(2, '0');
+    const formattedTime = `${hours}:${minutes}`;
 
-    // Format the time components
-    const formattedTime = `${hours}:${minutes}:${seconds}`;
-
-    // Create a new message element
-    const newMessageElement = document.createElement('div');
-    newMessageElement.textContent = `${data.user}: ${data.message}`;
-
-    // Check if the message is from the current user and style accordingly
-    if (data.userId == userId) {
-        newMessageElement.classList.add('mymessage');
-    } else {
-        newMessageElement.classList.add('message');
+    var className = 'sender'
+    if(data.userId == userId) {
+        className= 'repaly'
     }
 
-    // Append the new message to the messages container
-    const messagesContainer = document.getElementById('messages-container');
-    messagesContainer.appendChild(newMessageElement);
-
-    // Create a span element for the time and style it
-    const timeSpan = document.createElement('span');
-    timeSpan.textContent = formattedTime;
-    timeSpan.classList.add('message-time');
-    timeSpan.style.fontSize = 'small'; // Make the time smaller
-    timeSpan.style.display = 'block'; // Display the time on a new line
-
-    // Append the time span below the message
-    newMessageElement.appendChild(timeSpan);
-});
+    $('.messages').append(`<li class="${className}">
+        <p><span class="text-danger">${data.user} : </span> ${data.message}</p>
+        <span class="time">${formattedTime}</span>
+    </li>`)
+})
 
 
 socket.on('notify', (data) =>{
@@ -65,8 +46,10 @@ socket.on('notify', (data) =>{
     newMessageElement.classList.add('notify');
     if(data.status) {
         newMessageElement.classList.add('green')
+    } else {
+        newMessageElement.classList.add('red')
     }
-    const messagesContainer = document.getElementById('messages-container');
+    const messagesContainer = document.querySelector('.messages');
     messagesContainer.appendChild(newMessageElement);
 
 })
@@ -75,14 +58,27 @@ socket.on('notify', (data) =>{
 socket.emit('userLoggedIn', {room: roomId})
 
 socket.on('showOnline', (data) => {
-    const onlineUsersList = document.getElementById('online-users-list');
+    const onlineUsersList = document.querySelector('.chat-list')
     onlineUsersList.innerHTML = ''; // Clear previous list
 
+    $('#people-amount').text(`${data.users.length} Online Users`)
+
     for (const user of data.users) {
-        const listItem = document.createElement('li');
-        listItem.className = "user-"+user.id
-        listItem.textContent = user.firstName; // Assuming the username property exists for each user
-        onlineUsersList.appendChild(listItem);
+
+        const file = user.file ? user.file : 'avatar.png'
+
+        $('.chat-list').append(`                                                           
+        <a href="#" class="d-flex align-items-center user-${user.id}">
+            <div class="flex-shrink-0">
+                <img class="img-fluid" src="/images/${file}" alt="user img">
+            </div>
+            <div class="flex-grow-1 ms-3">
+                <h3>${user.firstName} ${user.lastName}</h3>
+                <p>front end developer</p>
+            </div>
+        </a>`
+        )
+
     }
 });
 
@@ -93,4 +89,6 @@ socket.on('userLoggedOut', (data) => {
     if(onlineUserName) {
         onlineUserName.remove()
     }
+
+    $('#people-amount').text(`${data.onlineUsers.length} Online Users`)
 })
