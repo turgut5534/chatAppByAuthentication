@@ -35,11 +35,14 @@ socket.on('sendToClient', (data) => {
 
     var className = 'sender'
     var messager;
+    var isYours= true
+
     if(data.userId == userId) {
         className= 'repaly'
         messager = ''
     } else {
         messager = `<span class="text-danger">${data.user} : </span>`
+        isYours = false
     }
 
     $('.messages').append(`<li class="${className}">
@@ -48,6 +51,12 @@ socket.on('sendToClient', (data) => {
     </li>`)
 
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    if(!isYours) {
+        const bip = document.querySelector('#message-bip')
+        bip.play()
+    }
+  
 })
 
 
