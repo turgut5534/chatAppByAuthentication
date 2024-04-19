@@ -811,3 +811,6 @@ nav a:hover {
     width: 20px;
     height: 45px;
 }
+#messages-container {
+    scroll-behavior: smooth;
+}

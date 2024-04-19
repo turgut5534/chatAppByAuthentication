@@ -5,6 +5,11 @@ const messageForm = document.querySelector('#message-form')
 const userId = document.querySelector('#user-id').value
 const roomId= document.querySelector('#room-id').value
 
+window.onload = () => {
+    var messagesContainer = document.getElementById('messages-container');
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
 messageForm.addEventListener('submit', (e) => {
 
     e.preventDefault()
@@ -16,12 +21,16 @@ messageForm.addEventListener('submit', (e) => {
     input.value = ""
     
     socket.emit('message', {message, userId, roomId}, handleMessageCallback)
+    
 
 })
 
 const handleMessageCallback = (error) => {
     if (error) {
         console.error("Error:", error);
+    } else {
+        var messagesContainer = document.getElementById('messages-container');
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 };
 
