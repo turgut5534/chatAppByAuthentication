@@ -5,8 +5,9 @@ const messageForm = document.querySelector('#message-form')
 const userId = document.querySelector('#user-id').value
 const roomId= document.querySelector('#room-id').value
 
+var messagesContainer = document.getElementById('messages-container');
+
 window.onload = () => {
-    var messagesContainer = document.getElementById('messages-container');
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
@@ -29,8 +30,7 @@ const handleMessageCallback = (error) => {
     if (error) {
         console.error("Error:", error);
     } else {
-        var messagesContainer = document.getElementById('messages-container');
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 };
 
