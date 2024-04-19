@@ -28,12 +28,16 @@ socket.on('sendToClient', (data) => {
     const formattedTime = `${hours}:${minutes}`;
 
     var className = 'sender'
+    var messager;
     if(data.userId == userId) {
         className= 'repaly'
+        messager = ''
+    } else {
+        messager = `<span class="text-danger">${data.user} : </span>`
     }
 
     $('.messages').append(`<li class="${className}">
-        <p><span class="text-danger">${data.user} : </span> ${data.message}</p>
+        <p>${messager}${data.message}</p>
         <span class="time">${formattedTime}</span>
     </li>`)
 })
