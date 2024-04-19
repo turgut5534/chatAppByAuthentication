@@ -21,19 +21,10 @@ messageForm.addEventListener('submit', (e) => {
 
     input.value = ""
     
-    socket.emit('message', {message, userId, roomId}, handleMessageCallback)
+    socket.emit('message', {message, userId, roomId})
     
 
 })
-
-const handleMessageCallback = (error) => {
-    if (error) {
-        console.error("Error:", error);
-    } else {
-        // messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-};
-
 
 socket.on('sendToClient', (data) => {
 
