@@ -33,6 +33,7 @@ io.on('connection', (socket) => {
         try {
     
             const username = `${socket.user.firstName} ${socket.user.lastName}`;
+
             io.to(data.roomId).emit('sendToClient', { user: username, userId: socket.user.id, message: data.message })
 
             await Message.create({
