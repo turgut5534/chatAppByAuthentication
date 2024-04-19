@@ -595,7 +595,7 @@ li.repaly .time {
 
 .send-btns .button-wrapper {
     position: relative;
-    width: 125px;
+    /* width: 125px; */
     height: auto;
     text-align: left;
     margin: 0 auto;
