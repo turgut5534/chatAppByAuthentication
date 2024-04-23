@@ -149,29 +149,44 @@
                                             </div>
                                         </div>
     
+                                        <div id="image-container"></div>
+
     
                                         <div id="messages-container" class="modal-body">
                                             <div class="msg-body">
                                                 <ul class="messages">
+                                          
                                                     <% if(messages) { %>
                                                         <% messages.forEach((message) => { %>
-                                                            <li class="<% if(message.User.id == user.id){ %>repaly<%} else {%>sender<%}%>">
-                                                                <p> 
-                                                                    <% if(message.User.id != user.id){ %>
-                                                                        <span class="text-danger"><%= message.User.firstName %> <%= message.User.lastName %>: </span> 
-                                                                    <%}%>
-                                                                        <%= message.text %> </p>
-                                                                <% 
-                                                                    const createdAt = new Date(message.createdAt);
-                                                                    const hours = ("0" + createdAt.getHours()).slice(-2);
-                                                                    const minutes = ("0" + createdAt.getMinutes()).slice(-2);
-                                                                %>
-                                                                <span class="time"><%= hours + ':' + minutes %></span>
+                                                           
+                                                                <li class="<% if(message.User.id == user.id){ %>repaly<%} else {%>sender<%}%>">
+                                                                    <% if(!message.file) { %>
+                                                                    <p> 
+                                                                        <% if(message.User.id != user.id){ %>
+                                                                            <span class="text-danger"><%= message.User.firstName %> <%= message.User.lastName %>: </span> 
+                                                                        <%}%>
+                                                                            <%= message.text %> </p>
+                                                                  
+                                                                    <% } else {%>
+
+                                                                        <img style="width: 300px; height: auto;" src="/<%=message.file%>" alt="">
+                                                                        <% 
+                                                                            const createdAt = new Date(message.createdAt);
+                                                                            const hours = ("0" + createdAt.getHours()).slice(-2);
+                                                                            const minutes = ("0" + createdAt.getMinutes()).slice(-2);
+                                                                        %>
+                                                                        <% if(message.User.id != user.id){ %>
+                                                                            <span class="time"><%= message.User.firstName %> <%= message.User.lastName %></span> 
+                                                                        <%}%>
+                                                                        <span class="time"><%= hours + ':' + minutes %></span>
+                                                                    <% } %>
+                                                                </li>
+                                        
+                                                           
                                                             
-                                                            </li>
                                                         <% })%> 
                                                     <%}%>       
-    
+                                                   
                                                 </ul>
                                             </div>
                                         </div>
@@ -194,7 +209,7 @@
                                                     <div class="button-wrapper">
                                                         <span class="label">
                                                             <img src="/images/folder.png" alt="image title"> attached file 
-                                                        </span><input type="file" name="upload" id="upload" class="upload-box" placeholder="Upload File" aria-label="Upload File">
+                                                        </span><input onchange="upload(this.files)" type="file" name="upload" id="upload" class="upload-box" placeholder="Upload File" aria-label="Upload File">
                                                     </div>
     
                                                     <select class="form-control" id="exampleFormControlSelect1">
@@ -298,9 +313,10 @@
 
             });
 
-
-
         })
+
+
+
     </script>
 </body>
 </html>

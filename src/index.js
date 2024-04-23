@@ -6,14 +6,18 @@ const cookieParser = require('cookie-parser');
 const http = require('http');
 const socketio = require('socket.io');
 const validator = require('validator')
+const { writeFile } = require('fs')
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 const publicDirectoy = path.join(__dirname, '../public');
 const viewsDir = path.join(__dirname, '../views');
+const uploadDirectory = path.join(__dirname, '../uploads')
 
 app.set('view engine', 'ejs');
 app.set('views', viewsDir);
 app.use(express.static(publicDirectoy));
+app.use(express.static(uploadDirectory))
 app.use('/socket.io', express.static(path.join(__dirname, '../node_modules/socket.io/client-dist')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -76,6 +80,42 @@ io.on('connection', (socket) => {
         socket.broadcast.to(room.room).emit('notify', { user: username, userId: socket.user.id, message: " has joined the chat", status: true })
 
     })
+
+    socket.on('imageData', async (data, callback) => {
+
+        try {
+
+            const filename = `${uuidv4()}.jpg`;
+            const filePath = path.join(uploadDirectory, filename);
+
+            const message = new Message({
+                text : 'imagefile',
+                file: filename,
+                RoomId: data.roomId,
+                UserId: data.userId
+            })
+
+            await message.save()
+        
+            writeFile(filePath, data.image, (err) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                console.log('Image saved successfully');
+    
+                if (typeof callback === 'function') {
+                    callback();
+                }
+            });
+    
+            io.to(data.roomId).emit('imageDataResponse', filename)
+
+        } catch(e) {
+            console.log(e)
+        }
+
+      });
 
     socket.on('disconnect', () => {
 

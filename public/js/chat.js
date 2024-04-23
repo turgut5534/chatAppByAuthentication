@@ -115,3 +115,18 @@ socket.on('userLoggedOut', (data) => {
 
     $('#people-amount').text(`${data.onlineUsers.length} Online Users`)
 })
+
+
+function upload(files) {
+    socket.emit('imageData', { image: files[0], roomId, userId }, (e) => {
+        console.log(e)
+    });
+  }
+
+
+socket.on('imageDataResponse', function(data){
+    
+    $('.messages').append(`<li><img style="width: 300px; height: auto;" src="/${data}" alt=""></li>`)
+
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+});
