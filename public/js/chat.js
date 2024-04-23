@@ -135,18 +135,29 @@ socket.on('imageDataResponse', function(data){
     
     
     var className = 'sender'
+    const imageExtensions = ['jpg', 'webp', 'jpeg', 'png']
+    const videoExtensions = ['mp4', 'MOV']
+    const extension = data.filename.split('.').pop()
+    var html;
 
     if(data.userId == userId) {
         className= 'repaly'
-        messager = ''
-    } else {
-        messager = `<span class="text-danger">${data.user} : </span>`
-        isYours = false
     }
 
+    if(imageExtensions.includes(extension)) {
+        html = `<li class="${className}"><a href="/${data.filename}" data-fancybox="gallery" data-caption="${data.filename}"><img style="width: 300px; height: auto;" src="/${data.filename}" alt=""></a>
+        <span class="time">${getTime()}</span></li>`
+    } else if (videoExtensions.includes(extension)) {
+        html = `<li class="${className}"><a data-fancybox="" href="/${data.filename}">
+        <video style="width: 300px; height: auto;" src="/${data.filename}"></video>
+    </a><span class="time">${getTime()}</span></li>`
+    } else {
+        html = `<li class="${className}"><a style="margin-right: 50px;" class="fancybox" href="/${data.filename}"><i class="fa-regular fa-file-pdf fa-2xl"></i></a><span class="time">${getTime()}</span></li>`
+    }
+
+
     $('.loading-image').remove()
-    $('.messages').append(`<li class="${className}"><a href="/${data.filename}" data-fancybox="gallery" data-caption="${data.filename}"><img style="width: 300px; height: auto;" src="/${data.filename}" alt=""></a>
-    <span class="time">${getTime()}</span></li>`)
+    $('.messages').append(html)
 
 
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
