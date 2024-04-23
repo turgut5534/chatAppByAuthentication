@@ -126,7 +126,19 @@ function upload(files) {
 
 socket.on('imageDataResponse', function(data){
     
-    $('.messages').append(`<li><img style="width: 300px; height: auto;" src="/${data}" alt=""></li>`)
+    
+    var className = 'sender'
+
+    if(data.userId == userId) {
+        className= 'repaly'
+        messager = ''
+    } else {
+        messager = `<span class="text-danger">${data.user} : </span>`
+        isYours = false
+    }
+
+    $('.messages').append(`<li class="${className}"><img style="width: 300px; height: auto;" src="/${data.filename}" alt=""></li>`)
+
 
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 });

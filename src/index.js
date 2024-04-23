@@ -26,7 +26,9 @@ app.use(mainRouter);
 const Message = require('./models/Message')
 
 const server = http.createServer(app);
-const io = socketio(server);
+const io = socketio(server, {
+    maxHttpBufferSize: 1e8 // 100 MB
+  });
 app.set('io', io);
 
 const onlineUsers = []
@@ -109,7 +111,7 @@ io.on('connection', (socket) => {
                 }
             });
     
-            io.to(data.roomId).emit('imageDataResponse', filename)
+            io.to(data.roomId).emit('imageDataResponse', {filename, userId: socket.user.id})
 
         } catch(e) {
             console.log(e)
