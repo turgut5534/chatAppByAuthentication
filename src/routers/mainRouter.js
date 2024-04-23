@@ -10,8 +10,26 @@ const slugify = require('slugify')
 const rs = require('randomstring')
 const Room = require('../models/Room')
 const Message = require('../models/Message')
+const multer = require('multer')
+const path = require('path')
+const fs = require('fs')
 
 const roomData = []
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/users'); // Specify the destination folder
+    },
+    filename: function (req, file, cb) {
+        // Generate a unique filename using Date.now() and the original file extension
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const fileExtension = path.extname(file.originalname);
+        cb(null, file.fieldname + '-' + uniqueSuffix + fileExtension);
+      }
+  });
+  
+  // Initialize Multer upload instance
+  const upload = multer({ storage: storage });
 
 router.get('/', (req,res) => {
     res.render('homepage')
@@ -264,6 +282,78 @@ router.post('/login', async (req,res) => {
     res.cookie('token', token, {httpOnly:true})
 
     res.status(200).json({message: 'Successful'})
+})
+
+router.get('/profile', auth,  (req,res) => {
+
+    res.render('profile', {
+        user: req.user
+    })
+
+})
+
+
+router.post('/profile/save', auth, async(req,res) => {
+
+    try {
+
+        const {firstName, lastName, email, password, repassword } = req.body
+
+        const user = await User.findByPk(req.user.id)
+
+        if(password) {
+
+            if(password != repassword) {
+                return res.status(401).send({message: 'Your password does not match'})
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10)
+            user.password = hashedPassword
+            await user.save()
+
+        }
+
+        user.firstName = firstName
+        user.lastName = lastName
+        user.email = email
+
+        await user.save()
+    
+        res.status(200).send(user)
+
+    } catch(e) {
+        console.log(e)
+    }
+
+})
+
+router.post('/profile/image/upload', auth, upload.single('image'),  async (req,res) => {
+
+    try {
+
+        const user = await User.findByPk(req.user.id)
+
+        if(user.photo) {
+
+            const photoPath = path.join(__dirname, '../../uploads/users', user.photo);
+            if (fs.existsSync(photoPath)) {
+                fs.unlinkSync(photoPath); 
+            } else {
+                console.log('File does not exist on the system:', user.photo);
+            }
+            
+        }
+        
+        user.photo = req.file.filename
+
+        await user.save()
+
+        res.status(201).send(user)
+
+    } catch(e) {
+
+    }
+
 })
 
 router.get('/logout', (req,res) => {
