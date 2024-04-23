@@ -144,7 +144,7 @@ socket.on('imageDataResponse', function(data){
         isYours = false
     }
 
-    $('.messages').append(`<li class="${className}"><img style="width: 300px; height: auto;" src="/${data.filename}" alt="">
+    $('.messages').append(`<li class="${className}"><a href="/${data.filename}" data-fancybox="gallery" data-caption="${data.filename}"><img style="width: 300px; height: auto;" src="/${data.filename}" alt=""></a>
     <span class="time">${getTime()}</span></li>`)
 
 
