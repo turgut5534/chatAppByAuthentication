@@ -125,7 +125,7 @@ socket.on('userLoggedOut', (data) => {
 
 
 function upload(files) {
-    socket.emit('imageData', { image: files[0], roomId, userId }, (e) => {
+    socket.emit('imageData', { image: files[0], filename: files[0].name , roomId, userId }, (e) => {
         console.log(e)
     });
   }

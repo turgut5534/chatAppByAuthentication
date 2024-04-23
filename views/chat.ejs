@@ -84,17 +84,9 @@
                                 <div class="modal-dialog-scrollable">
                                     <div class="modal-content">
                                         <div class="chat-header">
-                                            <div class="msg-search">
-                                                <input type="text" class="form-control" id="search-users" placeholder="Search" aria-label="search">
-                                                <a class="add" href="#"><img class="img-fluid" src="https://mehedihtml.com/chatbox/assets/img/add.svg" alt="add"></a>
-                                            </div>
-    
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                                 <li class="nav-item" role="presentation">
-                                                    <button class="nav-link active" id="Open-tab" data-bs-toggle="tab" data-bs-target="#Open" type="button" role="tab" aria-controls="Open" aria-selected="true">Open</button>
-                                                </li>
-                                                <li class="nav-item" role="presentation">
-                                                    <button class="nav-link" id="Closed-tab" data-bs-toggle="tab" data-bs-target="#Closed" type="button" role="tab" aria-controls="Closed" aria-selected="false">Closed</button>
+                                                    <button class="nav-link active" id="Open-tab" data-bs-toggle="tab" data-bs-target="#Open" type="button" role="tab" aria-controls="Open" aria-selected="true">Online Users</button>
                                                 </li>
                                             </ul>
                                         </div>
@@ -175,9 +167,22 @@
                                                                             <%= message.text %> </p>
                                                                   
                                                                     <% } else {%>
-                                                                        <a href="/<%=message.file%>" data-fancybox="gallery" data-caption="<%=message.file%>">
+                                                                        <%
+                                                                            const extension = message.file.split('.').pop()
+                                                                        %>
+            
+                                                                       
+                                                                        <% if(extension =='jpg' || extension == 'webp' || extension == 'png') {%> <a href="/<%=message.file%>" data-fancybox="gallery" data-caption="<%=message.file%>">
                                                                         <img style="width: 300px; height: auto;" src="/<%=message.file%>" alt="">
                                                                         </a>
+                                                                        <% } else if (extension == 'pdf') {%>
+                                                                            <a style="margin-right: 50px;" class="fancybox" href="/<%= message.file%>"><i class="fa-regular fa-file-pdf fa-2xl"></i></a>
+                                                                            <% } else if (extension == 'mp4' || extension == 'MOV')  {%>
+                                                                                <a data-fancybox="" href="/<%=message.file%>">
+                                                                                    <video style="width: 300px; height: auto;" src="/<%=message.file%>"></video>
+                                                                                </a>
+                                                                        <% } else { %>
+                                                                        <%}%>
                                                                      
                                                                         <% if(message.User.id != user.id){ %>
                                                                             <span class="time"><%= message.User.firstName %> <%= message.User.lastName %></span> 

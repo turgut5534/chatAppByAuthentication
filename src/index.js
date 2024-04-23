@@ -89,7 +89,8 @@ io.on('connection', (socket) => {
         try {
 
             io.to(data.roomId).emit('loading')
-            const filename = `${uuidv4()}.jpg`;
+            const originalExtension = path.extname(data.filename);
+            const filename = `${uuidv4()}${originalExtension}`;
             const filePath = path.join(uploadDirectory, filename);
 
             const message = new Message({
