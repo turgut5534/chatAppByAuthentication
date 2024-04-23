@@ -88,6 +88,7 @@ io.on('connection', (socket) => {
 
         try {
 
+            io.to(data.roomId).emit('loading')
             const filename = `${uuidv4()}.jpg`;
             const filePath = path.join(uploadDirectory, filename);
 

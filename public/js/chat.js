@@ -144,6 +144,7 @@ socket.on('imageDataResponse', function(data){
         isYours = false
     }
 
+    $('.loading-image').remove()
     $('.messages').append(`<li class="${className}"><a href="/${data.filename}" data-fancybox="gallery" data-caption="${data.filename}"><img style="width: 300px; height: auto;" src="/${data.filename}" alt=""></a>
     <span class="time">${getTime()}</span></li>`)
 
@@ -151,3 +152,7 @@ socket.on('imageDataResponse', function(data){
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 });
 
+socket.on('loading', () => {
+    
+    $('.messages').append(`<li class="loading-image text-end"><i class="fa-solid fa-spinner fa-spin fa-2xl"></i></li>`)
+})
