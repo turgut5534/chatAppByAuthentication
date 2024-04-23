@@ -29,7 +29,12 @@ const storage = multer.diskStorage({
   });
   
   // Initialize Multer upload instance
-  const upload = multer({ storage: storage });
+  const upload = multer({ 
+    storage: storage, 
+    limits: {
+        fileSize: 5*1024*1024
+    }
+});
 
 router.get('/', (req,res) => {
     res.render('homepage')

@@ -181,7 +181,7 @@
                                                                         %>
             
                                                                         <li class="<% if(message.User.id == user.id){ %>repaly<%} else {%>sender<%}%>">
-                                                                        <% if(extension =='jpg' || extension == 'webp' || extension == 'png') {%> <a href="/<%=message.file%>" data-fancybox="gallery" data-caption="<%=message.file%>">
+                                                                        <% if(extension =='JPG' || extension == 'jpg' || extension == 'webp' || extension == 'png') {%> <a href="/<%=message.file%>" data-fancybox="gallery" data-caption="<%=message.file%>">
                                                                         <img style="width: 300px; height: auto;" src="/<%=message.file%>" alt="">
                                                                         </a>
                                                                         <% } else if (extension == 'pdf') {%>
