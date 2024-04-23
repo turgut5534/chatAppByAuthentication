@@ -1,4 +1,5 @@
 const socket = io();
+Fancybox.bind()
 
 const messageForm = document.querySelector('#message-form')
 
@@ -142,3 +143,4 @@ socket.on('imageDataResponse', function(data){
 
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 });
+
