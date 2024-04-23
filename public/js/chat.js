@@ -105,7 +105,6 @@ socket.on('showOnline', (data) => {
             </div>
             <div class="flex-grow-1 ms-3">
                 <h3>${user.firstName} ${user.lastName}</h3>
-                <p>front end developer</p>
             </div>
         </a>`
         )

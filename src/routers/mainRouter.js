@@ -356,6 +356,7 @@ router.post('/profile/image/upload', auth, upload.single('image'),  async (req,r
 
 })
 
+
 router.get('/logout', (req,res) => {
 
     res.cookie('token', '', {expries: new Date(0)})
