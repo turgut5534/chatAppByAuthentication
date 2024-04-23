@@ -177,16 +177,19 @@
                                                                         <a href="/<%=message.file%>" data-fancybox="gallery" data-caption="Caption #1">
                                                                         <img style="width: 300px; height: auto;" src="/<%=message.file%>" alt="">
                                                                         </a>
-                                                                        <% 
-                                                                            const createdAt = new Date(message.createdAt);
-                                                                            const hours = ("0" + createdAt.getHours()).slice(-2);
-                                                                            const minutes = ("0" + createdAt.getMinutes()).slice(-2);
-                                                                        %>
+                                                                     
                                                                         <% if(message.User.id != user.id){ %>
                                                                             <span class="time"><%= message.User.firstName %> <%= message.User.lastName %></span> 
                                                                         <%}%>
-                                                                        <span class="time"><%= hours + ':' + minutes %></span>
+                                                                       
                                                                     <% } %>
+                                                                    <% 
+                                                                        const createdAt = new Date(message.createdAt);
+                                                                        const hours = ("0" + createdAt.getHours()).slice(-2);
+                                                                        const minutes = ("0" + createdAt.getMinutes()).slice(-2);
+                                                                        
+                                                                    %>
+                                                                    <span class="time"><%= hours + ':' + minutes %></span>
                                                                 </li>
                                         
                                                            

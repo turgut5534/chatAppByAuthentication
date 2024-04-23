@@ -27,12 +27,18 @@ messageForm.addEventListener('submit', (e) => {
 
 })
 
-socket.on('sendToClient', (data) => {
-
+const getTime = () => {
     const currentTime = new Date();
     const hours = String(currentTime.getHours()).padStart(2, '0');
     const minutes = String(currentTime.getMinutes()).padStart(2, '0');
     const formattedTime = `${hours}:${minutes}`;
+
+    return formattedTime
+}
+
+socket.on('sendToClient', (data) => {
+
+
 
     var className = 'sender'
     var messager;
@@ -48,7 +54,7 @@ socket.on('sendToClient', (data) => {
 
     $('.messages').append(`<li class="${className}">
         <p>${messager}${data.message}</p>
-        <span class="time">${formattedTime}</span>
+        <span class="time">${getTime()}</span>
     </li>`)
 
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -138,7 +144,8 @@ socket.on('imageDataResponse', function(data){
         isYours = false
     }
 
-    $('.messages').append(`<li class="${className}"><img style="width: 300px; height: auto;" src="/${data.filename}" alt=""></li>`)
+    $('.messages').append(`<li class="${className}"><img style="width: 300px; height: auto;" src="/${data.filename}" alt="">
+    <span class="time">${getTime()}</span></li>`)
 
 
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
