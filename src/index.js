@@ -67,7 +67,8 @@ io.on('connection', (socket) => {
                 firstName: socket.user.firstName,
                 lastName: socket.user.lastName,
                 email: socket.user.email,
-                room: room.room
+                room: room.room,
+                photo: socket.user.photo
             }
             onlineUsers.push(newUser);
 

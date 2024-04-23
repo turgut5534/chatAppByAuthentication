@@ -95,12 +95,13 @@ socket.on('showOnline', (data) => {
 
     for (const user of data.users) {
 
-        const file = user.file ? user.file : 'avatar.png'
+        console.log(user)
+        const file = user.photo ? '/users/'+user.photo : '/images/avatar.png'
 
         $('.chat-list').append(`                                                           
         <a href="#" class="d-flex align-items-center user-${user.id}">
             <div class="flex-shrink-0">
-                <img class="img-fluid" src="/images/${file}" alt="user img">
+                <img class="img-fluid" src="${file}" alt="user img">
             </div>
             <div class="flex-grow-1 ms-3">
                 <h3>${user.firstName} ${user.lastName}</h3>
