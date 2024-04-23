@@ -135,7 +135,7 @@ socket.on('imageDataResponse', function(data){
     
     
     var className = 'sender'
-    const imageExtensions = ['jpg', 'webp', 'jpeg', 'png']
+    const imageExtensions = ['jpg', 'webp', 'jpeg', 'png', 'JPG']
     const videoExtensions = ['mp4', 'MOV']
     const extension = data.filename.split('.').pop()
     var html;
