@@ -20,6 +20,7 @@ app.use(express.static(publicDirectoy));
 app.use(express.static(uploadDirectory))
 app.use('/socket.io', express.static(path.join(__dirname, '../node_modules/socket.io/client-dist')));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(mainRouter);
 
@@ -37,6 +38,7 @@ io.on('connection', (socket) => {
 
     socket.on('message', async (data) => {
 
+        console.log('Hello')
         try {
     
             const username = `${socket.user.firstName} ${socket.user.lastName}`;
@@ -55,6 +57,12 @@ io.on('connection', (socket) => {
             console.log(e)
         }
 
+    })
+
+    socket.on('phonemessage' ,(data) => {
+        console.log(data)
+
+        io.emit('sendToClient', {message: data.message})
     })
 
     socket.on('userLoggedIn', (room) => {
@@ -151,6 +159,6 @@ io.on('connection', (socket) => {
 
 });
 
-server.listen(8000, () => {
-    console.log('Server is up on 8000');
+server.listen(8001, () => {
+    console.log('Server is up on 8001');
 });

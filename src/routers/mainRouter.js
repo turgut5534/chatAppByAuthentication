@@ -40,6 +40,32 @@ router.get('/', (req,res) => {
     res.render('homepage')
 })
 
+router.post('/react', async(req,res) => {
+
+
+    const {email, password}  = req.body
+
+    const userExist = await User.findOne({where: {email}})
+
+    if(!userExist) {
+        return res.status(400).json({message: "User with this email not exists"})
+    }
+
+    const passwordMatch = await bcrypt.compare(password, userExist.password)
+
+    console.log(passwordMatch)
+    if(!passwordMatch) {
+        return res.status(401).json({message: "Incorrect email or password"})
+    }
+
+    const token = jwt.sign({userId: userExist.id}, process.env.SECRET_KEY, {expiresIn: '12h'})
+
+    res.cookie('token', token, {httpOnly:true})
+
+    res.status(200).json({message: 'Successful'})
+
+})
+
 router.get('/rooms/:slug', auth, async (req,res) => {
     
     try {
