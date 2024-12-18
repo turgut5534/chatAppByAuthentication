@@ -22,7 +22,7 @@ app.use('/socket.io', express.static(path.join(__dirname, '../node_modules/socke
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(mainRouter);
+app.use('/chatapp/', mainRouter);
 
 const Message = require('./models/Message')
 
