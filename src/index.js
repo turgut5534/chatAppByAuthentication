@@ -16,8 +16,8 @@ const uploadDirectory = path.join(__dirname, '../uploads')
 
 app.set('view engine', 'ejs');
 app.set('views', viewsDir);
-app.use('/chatapp',express.static(publicDirectoy));
-app.use('/chatapp',express.static(uploadDirectory))
+app.use(express.static(publicDirectoy));
+app.use(express.static(uploadDirectory))
 app.use('/socket.io', express.static(path.join(__dirname, '../node_modules/socket.io/client-dist')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
