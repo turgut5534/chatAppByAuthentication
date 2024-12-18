@@ -28,6 +28,7 @@
           <div class="row gy-5 justify-content-center">
             <div class="col-12 col-lg-5">
               <form id="login-form" action="/chatapp/login" method="POST">
+                <meta name="csrf-token" content="{{ csrf_token }}">
                 <div class="row gy-3 overflow-hidden">
                   <div class="col-12">
                     <div class="form-floating mb-3">
@@ -114,6 +115,8 @@
             }
         });
 
+        const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
         $('#login-form').on('submit', function (e) {
 
             e.preventDefault()
@@ -124,6 +127,9 @@
                 type: 'POST',
                 url: $(this).attr('action'),
                 data: $(this).serialize(),
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken // Include CSRF token in the headers
+                },
                 beforeSend: function () {
                     button.html('Please wait...')
                 },

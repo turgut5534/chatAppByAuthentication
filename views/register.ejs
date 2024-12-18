@@ -24,6 +24,8 @@
 
                                 <form id="register-form" method="POST" action="/chatapp/register">
 
+                                    <meta name="csrf-token" content="{{ csrf_token }}">
+
                                     <div data-mdb-input-init class="form-outline mb-4">
                                         <input name="firstName" type="text" id="form3Example1cg"
                                             class="form-control form-control-lg" />
@@ -93,6 +95,8 @@
             }
         });
 
+        const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
         $('#register-form').on('submit', function (e) {
 
             e.preventDefault()
@@ -103,6 +107,9 @@
                 type: 'POST',
                 url: $(this).attr('action'),
                 data: $(this).serialize(),
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken // Include CSRF token in the headers
+                },
                 beforeSend: function () {
                     button.html('Please wait...')
                 },
