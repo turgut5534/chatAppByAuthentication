@@ -33,7 +33,7 @@ const auth = async (req,res,next) => {
 
     } catch(e) {
         console.log(e)
-        res.redirect('/login')
+        res.redirect('/chatapp/login')
     }
 
 }

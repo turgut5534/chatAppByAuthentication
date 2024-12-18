@@ -22,7 +22,7 @@
                             <div class="card-body p-5">
                                 <h2 class="text-uppercase text-center mb-5">Create an account</h2>
 
-                                <form id="register-form" method="POST" action="/register">
+                                <form id="register-form" method="POST" action="/chatapp/register">
 
                                     <div data-mdb-input-init class="form-outline mb-4">
                                         <input name="firstName" type="text" id="form3Example1cg"
@@ -68,7 +68,7 @@
                                             class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Register</button>
                                     </div>
 
-                                    <p class="text-center text-muted mt-5 mb-0">Have already an account? <a href="/login"
+                                    <p class="text-center text-muted mt-5 mb-0">Have already an account? <a href="/chatapp/login"
                                             class="fw-bold text-body"><u>Login here</u></a></p>
 
                                 </form>
@@ -116,7 +116,7 @@
                     $('#register-form')[0].reset();
 
                     setTimeout(() => {
-                        window.location.href = '/login'
+                        window.location.href = '/chatapp/login'
                     }, 1000);
                 },
                 error: function (e) {
